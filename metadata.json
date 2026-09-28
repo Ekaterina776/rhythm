@@ -1,0 +1,6 @@
+{
+  "name": "РитмоСтих - Тренажер стихосложения с MediaPipe",
+  "description": "Интерактивная образовательная платформа для определения стихотворных размеров через распознавание жестов рук с помощью MediaPipe Hands и ИИ-анализа.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
