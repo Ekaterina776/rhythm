@@ -102,31 +102,31 @@ export const InteractiveRhythmRunner: React.FC<InteractiveRhythmRunnerProps> = (
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-6">
+    <div className="mx-auto max-w-5xl px-3 sm:px-4 py-4 sm:py-6">
       {/* Exercise Header */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3 sm:pb-4">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="rounded-lg bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-400 border border-amber-500/20">
+            <span className="rounded-lg bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-400 border border-amber-500/20">
               {assignment.grade} класс
             </span>
             {isTraining && (
-              <span className="rounded-lg bg-cyan-500/10 px-2.5 py-1 text-xs font-semibold text-cyan-300 border border-cyan-500/20">
+              <span className="rounded-lg bg-cyan-500/10 px-2 py-0.5 text-xs font-semibold text-cyan-300 border border-cyan-500/20">
                 Режим тренировки
               </span>
             )}
           </div>
-          <h1 className="mt-1 font-serif text-2xl font-bold text-white tracking-wide">
+          <h1 className="mt-1 font-serif text-xl sm:text-2xl font-bold text-white tracking-wide">
             {assignment.title}
           </h1>
           <p className="text-xs text-slate-400">{assignment.author}</p>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           {/* Header Camera Toggle */}
           <button
             onClick={() => setIsCameraEnabled(prev => !prev)}
-            className={`flex items-center space-x-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+            className={`flex items-center space-x-1.5 rounded-xl border px-2.5 sm:px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
               isCameraEnabled
                 ? 'border-slate-700 bg-slate-800/80 text-slate-200 hover:bg-slate-700'
                 : 'border-emerald-500/40 bg-emerald-950/40 text-emerald-300 hover:bg-emerald-900/40'
@@ -136,27 +136,27 @@ export const InteractiveRhythmRunner: React.FC<InteractiveRhythmRunnerProps> = (
             {isCameraEnabled ? (
               <>
                 <CameraOff className="h-3.5 w-3.5 text-rose-400" />
-                <span className="hidden sm:inline">Камера вкл</span>
+                <span className="text-xs">Камера вкл</span>
               </>
             ) : (
               <>
                 <Camera className="h-3.5 w-3.5 text-emerald-400" />
-                <span>Включить камеру</span>
+                <span className="text-xs">Вкл. камеру</span>
               </>
             )}
           </button>
 
           <button
             onClick={onOpenTutorial}
-            className="flex items-center space-x-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-slate-700 transition-colors"
+            className="flex items-center space-x-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-2.5 sm:px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-slate-700 transition-colors cursor-pointer"
           >
             <HelpCircle className="h-4 w-4 text-amber-400" />
-            <span className="hidden sm:inline">Инструкция по жестам</span>
+            <span className="hidden sm:inline">Инструкция</span>
             <span className="sm:hidden">Жесты</span>
           </button>
           <button
             onClick={onCancel}
-            className="rounded-xl border border-slate-800 bg-slate-900 px-3 py-1.5 text-xs text-slate-400 hover:text-white transition-colors"
+            className="rounded-xl border border-slate-800 bg-slate-900 px-3 py-1.5 text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
           >
             Выйти
           </button>
@@ -291,30 +291,30 @@ export const InteractiveRhythmRunner: React.FC<InteractiveRhythmRunnerProps> = (
 
             {/* Line Completion & Actions Banner */}
             {isLineComplete ? (
-              <div className="mt-4 rounded-xl border border-emerald-500/40 bg-emerald-950/30 p-4 animate-in fade-in">
-                <div className="flex items-center justify-between mb-3">
+              <div className="mt-4 rounded-xl border border-emerald-500/40 bg-emerald-950/30 p-3 sm:p-4 animate-in fade-in">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                   <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-5 w-5 text-emerald-400" />
+                    <CheckCircle className="h-5 w-5 text-emerald-400 shrink-0" />
                     <span className="font-semibold text-emerald-200 text-sm">
                       Строка {currentLineIndex + 1} разобрана!
                     </span>
                   </div>
-                  <div className="font-mono text-sm font-bold text-amber-300 bg-slate-950/70 px-3 py-1 rounded-lg border border-slate-700">
+                  <div className="font-mono text-xs sm:text-sm font-bold text-amber-300 bg-slate-950/70 px-2.5 py-1 rounded-lg border border-slate-700 self-start sm:self-auto">
                     Схема: {currentLineGestures.join(' ')}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end space-x-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
                   <button
                     onClick={handleResetCurrentLine}
-                    className="flex items-center space-x-1.5 rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs font-medium text-slate-300 hover:bg-slate-700 transition-colors"
+                    className="flex items-center justify-center space-x-1.5 rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-2 text-xs font-medium text-slate-300 hover:bg-slate-700 transition-colors cursor-pointer"
                   >
                     <RotateCcw className="h-3.5 w-3.5" />
                     <span>Повторить строку</span>
                   </button>
                   <button
                     onClick={handleNextLine}
-                    className="flex items-center space-x-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-5 py-2 text-xs font-bold text-slate-950 hover:from-amber-400 hover:to-amber-500 shadow-md shadow-amber-500/20 active:scale-95 transition-all"
+                    className="flex items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-4 sm:px-5 py-2.5 sm:py-2 text-xs font-bold text-slate-950 hover:from-amber-400 hover:to-amber-500 shadow-md shadow-amber-500/20 active:scale-95 transition-all cursor-pointer"
                   >
                     <span>
                       {isLastLine ? 'Перейти к разметке стоп' : 'Далее к следующей строке'}
@@ -324,7 +324,7 @@ export const InteractiveRhythmRunner: React.FC<InteractiveRhythmRunnerProps> = (
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs text-slate-400 border-t border-slate-800/80 pt-3">
                 <span>
                   Активный слог:{' '}
                   <strong className="text-amber-300 font-serif text-sm">

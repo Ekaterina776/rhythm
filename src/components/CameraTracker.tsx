@@ -340,19 +340,20 @@ export const CameraTracker: React.FC<CameraTrackerProps> = ({
               }`}
             />
           </div>
-          <span className="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
+          <span className="text-xs font-semibold text-slate-200 flex items-center gap-1.5 shrink-0">
             <Hand className="h-3.5 w-3.5 text-amber-400" />
-            <span>Схематический трекер</span>
+            <span className="hidden xs:inline">Схематический трекер</span>
+            <span className="xs:hidden">Трекер</span>
           </span>
         </div>
 
         {/* Action Controls: Camera ON/OFF toggle and Recognized Gesture Badge */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
           {/* Prominent Camera Power Toggle Button */}
           <button
             type="button"
             onClick={toggleCamera}
-            className={`flex items-center space-x-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer border ${
+            className={`flex items-center space-x-1 rounded-lg px-2 py-1 text-xs font-semibold transition-all cursor-pointer border ${
               cameraEnabled
                 ? 'border-slate-700 bg-slate-800/90 text-slate-300 hover:border-rose-500/40 hover:bg-rose-950/40 hover:text-rose-300'
                 : 'border-emerald-500/50 bg-emerald-950/60 text-emerald-300 hover:bg-emerald-900/60 shadow-sm shadow-emerald-500/20'
@@ -362,12 +363,12 @@ export const CameraTracker: React.FC<CameraTrackerProps> = ({
             {cameraEnabled ? (
               <>
                 <CameraOff className="h-3.5 w-3.5 text-rose-400" />
-                <span className="hidden sm:inline">Выкл камеру</span>
+                <span className="hidden md:inline">Выкл камеру</span>
               </>
             ) : (
               <>
                 <Camera className="h-3.5 w-3.5 text-emerald-400" />
-                <span>Вкл камеру</span>
+                <span className="text-xs">Вкл камеру</span>
               </>
             )}
           </button>
@@ -376,17 +377,17 @@ export const CameraTracker: React.FC<CameraTrackerProps> = ({
           {cameraEnabled && (
             <>
               {currentGesture === 'vertical_edge' ? (
-                <span className="flex items-center space-x-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 px-2.5 py-0.5 text-xs font-bold text-amber-300">
+                <span className="flex items-center space-x-1 rounded-full bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 text-xs font-bold text-amber-300 shrink-0">
                   <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-                  <span>УДАРНЫЙ [ _ ]</span>
+                  <span>[_] Ударный</span>
                 </span>
               ) : currentGesture === 'horizontal_edge' ? (
-                <span className="flex items-center space-x-1.5 rounded-full bg-blue-500/20 border border-blue-500/40 px-2.5 py-0.5 text-xs font-bold text-blue-300">
+                <span className="flex items-center space-x-1 rounded-full bg-blue-500/20 border border-blue-500/40 px-2 py-0.5 text-xs font-bold text-blue-300 shrink-0">
                   <span className="h-2 w-2 rounded-full bg-blue-400 animate-pulse" />
-                  <span>БЕЗУДАРНЫЙ [ U ]</span>
+                  <span>[U] Безударный</span>
                 </span>
               ) : (
-                <span className="rounded-full bg-slate-800 px-2 py-0.5 text-[10px] text-slate-400 hidden sm:inline">
+                <span className="rounded-full bg-slate-800 px-2 py-0.5 text-[10px] text-slate-400 hidden xs:inline shrink-0">
                   Ожидание...
                 </span>
               )}

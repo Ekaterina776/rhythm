@@ -33,6 +33,7 @@ import { StudentDashboard } from './components/StudentDashboard';
 import { InteractiveRhythmRunner } from './components/InteractiveRhythmRunner';
 import { FootScansionEditor } from './components/FootScansionEditor';
 import { SubmissionResultView } from './components/SubmissionResultView';
+import { OfflineIndicator } from './components/OfflineIndicator';
 import { compareLineScansion } from './lib/poetryEngine';
 
 export default function App() {
@@ -608,6 +609,9 @@ export default function App() {
           }}
         />
       )}
+
+      {/* Offline Status Toast Indicator */}
+      <OfflineIndicator />
     </div>
   );
 }

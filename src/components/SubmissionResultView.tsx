@@ -89,19 +89,19 @@ export const SubmissionResultView: React.FC<SubmissionResultViewProps> = ({
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       {/* Top Navigation */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <button
           onClick={onBackToList}
-          className="flex items-center space-x-1.5 rounded-xl border border-slate-800 bg-slate-900/80 px-3.5 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+          className="flex items-center space-x-1.5 rounded-xl border border-slate-800 bg-slate-900/80 px-3.5 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors self-start cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>К списку заданий</span>
         </button>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
           {submission.isTraining ? (
             <span className="rounded-full bg-cyan-500/20 px-3 py-1 text-xs font-semibold text-cyan-300 border border-cyan-500/30">
-              Категория: Тренировка (не влияет на оценку)
+              Тренировка (без оценки)
             </span>
           ) : (
             <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-300 border border-emerald-500/30">
@@ -109,7 +109,7 @@ export const SubmissionResultView: React.FC<SubmissionResultViewProps> = ({
             </span>
           )}
           <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-400">
-            Тренировок: {submission.trainingCount || 0}
+            Попыток: {submission.trainingCount || 0}
           </span>
         </div>
       </div>

@@ -1,12 +1,9 @@
 {
-  "projectId": "centered-record-fkl2c",
-  "appId": "1:136071545002:web:3929f12cc94eefd88f50d3",
-  "apiKey": "AIzaSyCs9B3T9WOeaAx1CLREJk9zY-MjoqaEZnQ",
-  "authDomain": "centered-record-fkl2c.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-mediapipe-25804e05-0d44-4f4e-8ec8-ffa21a371ffa",
-  "storageBucket": "centered-record-fkl2c.firebasestorage.app",
-  "messagingSenderId": "136071545002",
-  "measurementId": "",
-  "oAuthClientId": "136071545002-g6476u29q09ggrfjgr0f896gamtamqe2.apps.googleusercontent.com",
-  "recaptchaSiteKey": ""
+  "projectId": "ritmostih",
+  "appId": "1:697222441268:web:4e78182480ae6ccc7e9d61",
+  "apiKey": "AIzaSyAF5DQUpCOtdO4kqBdrz6IccpJIj4-4B7w",
+  "authDomain": "ritmostih.firebaseapp.com",
+  "storageBucket": "ritmostih.firebasestorage.app",
+  "messagingSenderId": "697222441268",
+  "measurementId": "G-RMEB5YQRGM"
 }

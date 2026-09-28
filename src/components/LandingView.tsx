@@ -24,6 +24,7 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import { sound } from '../lib/soundEffects';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface LandingViewProps {
   onStartAsStudent: () => void;
@@ -101,7 +102,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
         </div>
 
         {/* Main Headline */}
-        <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight max-w-4xl mx-auto">
+        <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight max-w-4xl mx-auto break-words">
           Определяйте стихотворные размеры{' '}
           <span className="bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 bg-clip-text text-transparent">
             жестами рук
@@ -110,7 +111,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
         </h1>
 
         {/* Subtitle with deep pedagogical context */}
-        <p className="mt-5 max-w-3xl mx-auto text-base sm:text-lg text-slate-300 leading-relaxed font-sans">
+        <p className="mt-4 sm:mt-5 max-w-3xl mx-auto text-sm sm:text-base md:text-lg text-slate-300 leading-relaxed font-sans px-2">
           Интерактивный тренажер <strong>«РитмоСтих»</strong> развивает физическое и моторное чувство ритма русской поэзии.
           Учащиеся читают стихи и отбивают такт жестами ребра ладони:
           <span className="text-amber-300 font-semibold"> вертикально для ударного слога [_]</span> и{' '}
@@ -119,10 +120,10 @@ export const LandingView: React.FC<LandingViewProps> = ({
         </p>
 
         {/* CTA Buttons */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 max-w-lg sm:max-w-none mx-auto">
           <button
             onClick={onStartAsStudent}
-            className="flex items-center space-x-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 px-7 py-3.5 text-sm font-bold text-slate-950 shadow-xl shadow-amber-500/25 hover:from-amber-400 hover:to-amber-500 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center justify-center space-x-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-3.5 text-sm font-bold text-slate-950 shadow-xl shadow-amber-500/25 hover:from-amber-400 hover:to-amber-500 active:scale-95 transition-all cursor-pointer"
           >
             <GraduationCap className="h-5 w-5" />
             <span>Кабинет Ученика</span>
@@ -131,7 +132,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
 
           <button
             onClick={onStartAsTeacher}
-            className="flex items-center space-x-2.5 rounded-2xl border border-slate-700 bg-slate-900/90 px-6 py-3.5 text-sm font-semibold text-white hover:bg-slate-800 hover:border-slate-600 active:scale-95 transition-all cursor-pointer shadow-lg"
+            className="flex items-center justify-center space-x-2.5 rounded-2xl border border-slate-700 bg-slate-900/90 px-6 py-3.5 text-sm font-semibold text-white hover:bg-slate-800 hover:border-slate-600 active:scale-95 transition-all cursor-pointer shadow-lg"
           >
             <BookOpen className="h-4 w-4 text-amber-400" />
             <span>Кабинет Учителя</span>
@@ -139,28 +140,33 @@ export const LandingView: React.FC<LandingViewProps> = ({
 
           <button
             onClick={onTryInteractiveDemo}
-            className="flex items-center space-x-2 rounded-2xl border border-cyan-500/40 bg-cyan-950/30 px-5 py-3.5 text-sm font-semibold text-cyan-300 hover:bg-cyan-900/40 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center justify-center space-x-2 rounded-2xl border border-cyan-500/40 bg-cyan-950/30 px-5 py-3.5 text-sm font-semibold text-cyan-300 hover:bg-cyan-900/40 active:scale-95 transition-all cursor-pointer"
           >
             <Zap className="h-4 w-4 text-cyan-400" />
-            <span>Попробовать разбор без регистрации</span>
+            <span>Демо без регистрации</span>
           </button>
         </div>
 
         {/* Privacy & Speed Note */}
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400">
-          <div className="flex items-center space-x-1.5 bg-slate-900/80 border border-slate-800 rounded-full px-3 py-1">
-            <ShieldCheck className="h-4 w-4 text-emerald-400" />
-            <span>Конфиденциальность: камера показывает только схематический образ руки, лицо скрыто</span>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-xs text-slate-400">
+          <div className="flex items-center space-x-1.5 bg-slate-900/80 border border-slate-800 rounded-full px-3 py-1 text-center">
+            <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0" />
+            <span>Камера показывает только скелет руки, лицо скрыто</span>
           </div>
-          <div className="flex items-center space-x-1.5 bg-slate-900/80 border border-slate-800 rounded-full px-3 py-1">
-            <Activity className="h-4 w-4 text-amber-400" />
-            <span>Быстрый отклик нейросети: ~16–80 мс без задержек</span>
+          <div className="flex items-center space-x-1.5 bg-slate-900/80 border border-slate-800 rounded-full px-3 py-1 text-center">
+            <Activity className="h-4 w-4 text-amber-400 shrink-0" />
+            <span>Отклик: ~16–80 мс без задержек</span>
           </div>
+        </div>
+
+        {/* PWA Homescreen Install Banner */}
+        <div className="mt-6 sm:mt-8 max-w-2xl mx-auto text-left">
+          <PWAInstallButton variant="banner" />
         </div>
       </div>
 
       {/* SHOWCASE SECTION: Interactive Video Simulation & Photographic Guide */}
-      <div className="relative mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-6xl px-3 sm:px-6 lg:px-8 pb-16">
         <div className="text-center mb-6">
           <div className="inline-flex items-center space-x-2 text-xs font-mono text-amber-400 uppercase tracking-wider mb-1">
             <Video className="h-4 w-4 text-amber-400" />
@@ -174,13 +180,13 @@ export const LandingView: React.FC<LandingViewProps> = ({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
           {/* Interactive Simulated Video Player (7 cols) */}
-          <div className="lg:col-span-7 flex flex-col justify-between rounded-3xl border border-slate-800 bg-slate-900/90 p-5 sm:p-6 shadow-2xl relative overflow-hidden">
+          <div className="lg:col-span-7 flex flex-col justify-between rounded-2xl sm:rounded-3xl border border-slate-800 bg-slate-900/90 p-4 sm:p-6 shadow-2xl relative overflow-hidden">
             {/* Top Video Header Bar */}
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-800/80 pb-3 mb-4 gap-2">
               <div className="flex items-center space-x-2.5">
-                <span className="flex h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse" />
+                <span className="flex h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse shrink-0" />
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-200">
                   Видео-симуляция распознавания ритма
                 </span>
@@ -193,19 +199,19 @@ export const LandingView: React.FC<LandingViewProps> = ({
             </div>
 
             {/* Video Stage Display */}
-            <div className="relative rounded-2xl border border-slate-800 bg-slate-950 p-6 flex flex-col items-center justify-center min-h-[350px] overflow-hidden">
+            <div className="relative rounded-2xl border border-slate-800 bg-slate-950 p-4 sm:p-6 flex flex-col items-center justify-center min-h-[320px] overflow-hidden">
               {/* Syllables Flowing Bar */}
-              <div className="w-full flex justify-between items-center mb-6 px-1">
+              <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-2 px-1">
                 <span className="text-xs font-serif text-slate-300">
                   Строка: <strong className="text-amber-200">«Буря мглою небо кроет»</strong> (А. С. Пушкин)
                 </span>
-                <span className="font-mono text-xs font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded">
+                <span className="font-mono text-xs font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded shrink-0">
                   Хорей (_U/_U/_U/_U)
                 </span>
               </div>
 
               {/* Syllable Bubbles with Highlight on Active */}
-              <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+              <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-6 max-w-full">
                 {demoSyllables.map((syl, idx) => {
                   const isActive = idx === demoStep;
                   const isPassed = idx < demoStep;
@@ -213,7 +219,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                   return (
                     <div key={idx} className="flex flex-col items-center">
                       <span
-                        className={`font-mono text-sm font-black mb-1 transition-all ${
+                        className={`font-mono text-xs sm:text-sm font-black mb-1 transition-all ${
                           isActive
                             ? syl.stress
                               ? 'text-amber-400 scale-125'
@@ -226,7 +232,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                         {syl.char}
                       </span>
                       <div
-                        className={`rounded-xl px-3 py-1.5 font-serif text-sm transition-all duration-200 ${
+                        className={`rounded-xl px-2.5 sm:px-3 py-1 sm:py-1.5 font-serif text-xs sm:text-sm transition-all duration-200 ${
                           isActive
                             ? 'bg-amber-500/30 border-2 border-amber-400 text-amber-100 shadow-lg shadow-amber-500/30 scale-110 font-bold'
                             : isPassed
@@ -243,10 +249,10 @@ export const LandingView: React.FC<LandingViewProps> = ({
               </div>
 
               {/* Simulated Holographic Schematic Hand */}
-              <div className="relative w-52 h-40 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col items-center justify-center p-3 shadow-inner">
+              <div className="relative w-full max-w-[280px] h-36 sm:h-40 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col items-center justify-center p-3 shadow-inner">
                 {/* Laser orientation beam */}
                 <div
-                  className={`w-36 h-2 rounded-full transition-all duration-300 transform ${
+                  className={`w-32 sm:w-36 h-2 rounded-full transition-all duration-300 transform ${
                     activeDemoSyl.stress
                       ? 'rotate-90 bg-amber-400 shadow-[0_0_14px_rgba(251,191,36,0.9)] scale-110'
                       : 'rotate-0 bg-cyan-400 shadow-[0_0_14px_rgba(34,211,238,0.9)] scale-110'
@@ -254,39 +260,39 @@ export const LandingView: React.FC<LandingViewProps> = ({
                 />
 
                 {/* Hand Edge Icon Model */}
-                <div className="mt-4 flex flex-col items-center">
+                <div className="mt-3 flex flex-col items-center text-center">
                   <div
-                    className={`rounded-xl p-3 transition-colors ${
+                    className={`rounded-xl p-2.5 transition-colors ${
                       activeDemoSyl.stress
                         ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                         : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
                     }`}
                   >
                     <Hand
-                      className={`h-9 w-9 transition-transform duration-300 ${
+                      className={`h-7 w-7 sm:h-8 sm:w-8 transition-transform duration-300 ${
                         activeDemoSyl.stress ? 'rotate-0' : '-rotate-90'
                       }`}
                     />
                   </div>
-                  <span className="mt-2.5 text-[11px] font-bold tracking-wide">
+                  <span className="mt-2 text-[10px] sm:text-[11px] font-bold tracking-wide">
                     {activeDemoSyl.stress ? (
-                      <span className="text-amber-300">РЕБРО ВЕРТИКАЛЬНО [ _ ] УДАРНЫЙ СЛОГ</span>
+                      <span className="text-amber-300">РЕБРО ВЕРТИКАЛЬНО [_] УДАРНЫЙ</span>
                     ) : (
-                      <span className="text-cyan-300">РЕБРО ГОРИЗОНТАЛЬНО [ U ] БЕЗУДАРНЫЙ СЛОГ</span>
+                      <span className="text-cyan-300">РЕБРО ГОРИЗОНТАЛЬНО [U] БЕЗУДАРНЫЙ</span>
                     )}
                   </span>
                 </div>
               </div>
 
               {/* Sub-label */}
-              <p className="mt-4 text-xs text-slate-400 text-center">
+              <p className="mt-3 text-xs text-slate-400 text-center">
                 Программа моментально считывает наклон ладони и фиксирует ритмический рисунок строки
               </p>
             </div>
 
             {/* Video Controls Bar */}
-            <div className="mt-4 flex flex-wrap items-center justify-between pt-2 border-t border-slate-800 text-xs gap-2">
-              <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between pt-3 border-t border-slate-800 text-xs gap-3">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={() => setIsPlaying(!isPlaying)}
                   className="flex items-center space-x-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1.5 transition-colors cursor-pointer"
@@ -299,14 +305,14 @@ export const LandingView: React.FC<LandingViewProps> = ({
                     setDemoStep(0);
                     setVideoTime(0);
                   }}
-                  className="p-1.5 rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  className="p-1.5 rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
                   title="Начать сначала"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={() => setSoundOn(!soundOn)}
-                  className="p-1.5 rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  className="p-1.5 rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
                   title={soundOn ? 'Выключить звук ритма' : 'Включить звук ритма'}
                 >
                   {soundOn ? <Volume2 className="h-3.5 w-3.5 text-emerald-400" /> : <VolumeX className="h-3.5 w-3.5" />}
@@ -317,7 +323,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                     <button
                       key={spd}
                       onClick={() => setPlaybackSpeed(spd)}
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-mono transition-colors ${
+                      className={`px-1.5 py-0.5 rounded text-[10px] font-mono transition-colors cursor-pointer ${
                         playbackSpeed === spd
                           ? 'bg-amber-500 text-slate-950 font-bold'
                           : 'bg-slate-800 text-slate-400 hover:text-white'

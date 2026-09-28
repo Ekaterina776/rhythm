@@ -119,10 +119,10 @@ export const FootScansionEditor: React.FC<FootScansionEditorProps> = ({
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
+    <div className="mx-auto max-w-4xl px-3 sm:px-4 py-4 sm:py-8">
       {/* Header */}
-      <div className="mb-6 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="mb-4 sm:mb-6 rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center space-x-2 mb-1">
               <span className="rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-bold text-amber-300 border border-amber-500/30">
@@ -134,7 +134,7 @@ export const FootScansionEditor: React.FC<FootScansionEditorProps> = ({
                 </span>
               )}
             </div>
-            <h1 className="font-serif text-2xl font-bold text-white tracking-wide">
+            <h1 className="font-serif text-xl sm:text-2xl font-bold text-white tracking-wide">
               {assignment.title} — определение размера
             </h1>
             <p className="text-xs text-slate-400 mt-1">
@@ -144,7 +144,7 @@ export const FootScansionEditor: React.FC<FootScansionEditorProps> = ({
 
           <button
             onClick={onOpenTutorial}
-            className="flex items-center space-x-1.5 rounded-xl border border-slate-700 bg-slate-800 px-3.5 py-2 text-xs font-medium text-slate-200 hover:bg-slate-700 transition-colors"
+            className="flex items-center justify-center space-x-1.5 rounded-xl border border-slate-700 bg-slate-800 px-3.5 py-2 text-xs font-medium text-slate-200 hover:bg-slate-700 transition-colors shrink-0 cursor-pointer"
           >
             <HelpCircle className="h-4 w-4 text-amber-400" />
             <span>Справка по размерам</span>
@@ -152,31 +152,31 @@ export const FootScansionEditor: React.FC<FootScansionEditorProps> = ({
         </div>
       </div>
 
-      <form onSubmit={handleFinish} className="space-y-6">
+      <form onSubmit={handleFinish} className="space-y-4 sm:space-y-6">
         {/* Scansion Board: 4 lines with gestures and clickable vertical foot cut slots */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-xl">
-          <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-800 pb-3 gap-2">
             <div className="flex items-center space-x-2">
-              <Scissors className="h-5 w-5 text-amber-400" />
-              <h2 className="font-serif text-lg font-bold text-white">
+              <Scissors className="h-5 w-5 text-amber-400 shrink-0" />
+              <h2 className="font-serif text-base sm:text-lg font-bold text-white">
                 Расстановка границ стоп (вертикальные линии)
               </h2>
             </div>
 
             {/* Quick helper shortcuts */}
-            <div className="flex items-center space-x-2 text-xs">
-              <span className="text-slate-400 hidden sm:inline">Быстрое деление:</span>
+            <div className="flex flex-wrap items-center gap-1.5 text-xs">
+              <span className="text-slate-400 hidden md:inline">Быстро:</span>
               <button
                 type="button"
                 onClick={() => applyFootPattern(2)}
-                className="rounded-lg border border-slate-700 bg-slate-800/80 px-2.5 py-1 text-slate-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors"
+                className="rounded-lg border border-slate-700 bg-slate-800/80 px-2.5 py-1 text-slate-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors cursor-pointer text-xs"
               >
                 По 2 слога (ямб/хорей)
               </button>
               <button
                 type="button"
                 onClick={() => applyFootPattern(3)}
-                className="rounded-lg border border-slate-700 bg-slate-800/80 px-2.5 py-1 text-slate-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors"
+                className="rounded-lg border border-slate-700 bg-slate-800/80 px-2.5 py-1 text-slate-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors cursor-pointer text-xs"
               >
                 По 3 слога (дактиль/...)
               </button>
@@ -184,7 +184,7 @@ export const FootScansionEditor: React.FC<FootScansionEditorProps> = ({
           </div>
 
           {/* Lines breakdown */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {assignment.lines.map((originalLine, lineIdx) => {
               const parsed = assignment.parsedLines[lineIdx];
               const syllables = parsed?.syllables || [];
@@ -194,65 +194,67 @@ export const FootScansionEditor: React.FC<FootScansionEditorProps> = ({
               return (
                 <div
                   key={lineIdx}
-                  className="rounded-xl border border-slate-800/80 bg-slate-950/70 p-4 transition-colors hover:border-slate-700"
+                  className="rounded-xl border border-slate-800/80 bg-slate-950/70 p-3 sm:p-4 transition-colors hover:border-slate-700"
                 >
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                    <span className="font-serif font-semibold text-slate-300">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-400 mb-2 gap-1">
+                    <span className="font-serif font-semibold text-slate-200 text-xs sm:text-sm">
                       Строка {lineIdx + 1}: «{originalLine}»
                     </span>
-                    <span className="font-mono text-amber-300 font-semibold text-[11px]">
+                    <span className="font-mono text-amber-300 font-semibold text-[11px] self-start sm:self-auto">
                       Схема: {getLineSchemeString(lineIdx) || '—'}
                     </span>
                   </div>
 
-                  {/* Syllables and vertical separator click zones */}
-                  <div className="flex flex-wrap items-center gap-y-3 py-2">
-                    {syllables.map((syl, sIdx) => {
-                      const gesture = recordedGestures[sIdx] || 'U';
-                      const isStressed = gesture === '_';
-                      const hasDividerAfter = lineDividersSet.has(sIdx);
-                      const isLastSyllable = sIdx === syllables.length - 1;
+                  {/* Syllables and vertical separator click zones with smooth horizontal scroll */}
+                  <div className="overflow-x-auto pb-2 pt-1 scrollbar-thin">
+                    <div className="flex items-center min-w-max gap-0.5 sm:gap-1 py-1">
+                      {syllables.map((syl, sIdx) => {
+                        const gesture = recordedGestures[sIdx] || 'U';
+                        const isStressed = gesture === '_';
+                        const hasDividerAfter = lineDividersSet.has(sIdx);
+                        const isLastSyllable = sIdx === syllables.length - 1;
 
-                      return (
-                        <React.Fragment key={sIdx}>
-                          {/* Syllable Block */}
-                          <div className="flex flex-col items-center">
-                            {/* Stressed / Unstressed mark */}
-                            <span
-                              className={`font-mono text-base font-black mb-1 ${
-                                isStressed
-                                  ? 'text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.6)]'
-                                  : 'text-blue-400'
-                              }`}
-                            >
-                              {gesture}
-                            </span>
+                        return (
+                          <React.Fragment key={sIdx}>
+                            {/* Syllable Block */}
+                            <div className="flex flex-col items-center">
+                              {/* Stressed / Unstressed mark */}
+                              <span
+                                className={`font-mono text-sm sm:text-base font-black mb-1 ${
+                                  isStressed
+                                    ? 'text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.6)]'
+                                    : 'text-blue-400'
+                                }`}
+                              >
+                                {gesture}
+                              </span>
 
-                            {/* Syllable text bubble */}
-                            <div className="rounded-lg border border-slate-700 bg-slate-800/90 px-3 py-1.5 font-serif text-sm text-slate-100 shadow-sm">
-                              {syl}
+                              {/* Syllable text bubble */}
+                              <div className="rounded-lg border border-slate-700 bg-slate-800/90 px-2.5 sm:px-3 py-1 sm:py-1.5 font-serif text-xs sm:text-sm text-slate-100 shadow-sm whitespace-nowrap">
+                                {syl}
+                              </div>
                             </div>
-                          </div>
 
-                          {/* Interactive Separator Slot */}
-                          {!isLastSyllable && (
-                            <button
-                              type="button"
-                              onClick={() => toggleDivider(lineIdx, sIdx)}
-                              title="Нажмите, чтобы провести или убрать вертикальную черту стопы (/)"
-                              className="group relative flex h-14 w-6 items-center justify-center cursor-pointer transition-all mx-0.5"
-                            >
-                              {hasDividerAfter ? (
-                                <div className="h-10 w-1 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
-                              ) : (
-                                <div className="h-8 w-0.5 rounded-full bg-slate-700/50 group-hover:bg-amber-400/60 group-hover:w-1 transition-all" />
-                              )}
-                              <span className="sr-only">Разделитель стопы</span>
-                            </button>
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
+                            {/* Interactive Separator Slot */}
+                            {!isLastSyllable && (
+                              <button
+                                type="button"
+                                onClick={() => toggleDivider(lineIdx, sIdx)}
+                                title="Нажмите, чтобы провести или убрать черту (/)"
+                                className="group relative flex h-12 sm:h-14 w-5 sm:w-6 items-center justify-center cursor-pointer transition-all mx-0.5"
+                              >
+                                {hasDividerAfter ? (
+                                  <div className="h-9 sm:h-10 w-1 sm:w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+                                ) : (
+                                  <div className="h-7 sm:h-8 w-0.5 rounded-full bg-slate-700/60 group-hover:bg-amber-400/60 group-hover:w-1 transition-all" />
+                                )}
+                                <span className="sr-only">Разделитель стопы</span>
+                              </button>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               );
@@ -351,10 +353,10 @@ export const FootScansionEditor: React.FC<FootScansionEditorProps> = ({
         )}
 
         {/* Submit Actions */}
-        <div className="flex items-center justify-end space-x-4 pt-2">
+        <div className="flex items-center justify-end pt-2">
           <button
             type="submit"
-            className="flex items-center space-x-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-3 font-bold text-slate-950 shadow-xl shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 active:scale-95 transition-all text-sm"
+            className="w-full sm:w-auto flex items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-3 font-bold text-slate-950 shadow-xl shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 active:scale-95 transition-all text-sm cursor-pointer"
           >
             <span>Сдать на проверку</span>
             <Send className="h-4 w-4" />
