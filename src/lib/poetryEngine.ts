@@ -2,13 +2,43 @@ import { LineScheme } from '../types';
 
 export const RUSSIAN_VOWELS = new Set(['а', 'е', 'ё', 'и', 'о', 'у', 'ы', 'э', 'ю', 'я']);
 
+// Plosive/fricative + liquid clusters that start a syllable onset in Russian:
+// бр, пр, др, тр, гр, кр, фр, хр, бл, пл, гл, кл, вл, фл, сл, зл
+const ONSET_CLUSTERS_WITH_LIQUIDS = new Set([
+  'бр', 'пр', 'др', 'тр', 'гр', 'кр', 'фр', 'хр',
+  'бл', 'пл', 'гл', 'кл', 'вл', 'фл', 'сл', 'зл',
+]);
+
+// Plosives/fricatives that combine with 'в': кв, св, зв, тв, дв, хв
+const ONSET_CLUSTERS_WITH_V = new Set(['кв', 'св', 'зв', 'тв', 'дв', 'хв']);
+
 /**
- * Splits a Russian word or phrase into syllables based on Russian vocalic rules.
- * Each syllable contains exactly one vowel.
+ * Splits a Russian word into syllables based on Russian school grammar & phonetic scansion rules:
+ * 1. Each syllable contains exactly one vowel.
+ * 2. 'ь', 'ъ' never start a syllable (they attach to the preceding consonant or combine with onset).
+ * 3. 'й' always closes the preceding syllable ('май-ка', 'вой-на', 'чай-ник').
+ * 4. Double consonants split between syllables ('стран-ни-ки', 'рус-ский', 'ван-на').
+ * 5. Consonant combinations:
+ *    - plosive + sonorant ('до-бро', 'ка-пля', 'за-пла-чет', 'хи-трый', 'кру-тя') stay together in the next syllable.
+ *    - clusters split according to traditional scansion: 'буд-то', 'ког-да', 'луч-ше', 'вих-ри', 'снеж-ные', 'туч-ки', 'веч-ные', 'юж-ная', 'чест-ных', 'зас-та-вил', 'из-гнан-ни-ки'.
  */
 export function splitWordIntoSyllables(word: string): string[] {
   const cleanWord = word.trim();
   if (!cleanWord) return [];
+
+  // Handle hyphenated words (e.g. кто-то, из-за, по-прежнему)
+  if (cleanWord.includes('-')) {
+    const parts = cleanWord.split('-');
+    const res: string[] = [];
+    for (let p = 0; p < parts.length; p++) {
+      const partSyls = splitWordIntoSyllables(parts[p]);
+      if (p < parts.length - 1 && partSyls.length > 0) {
+        partSyls[partSyls.length - 1] += '-';
+      }
+      res.push(...partSyls);
+    }
+    return res;
+  }
 
   const lower = cleanWord.toLowerCase();
   const vowelIndices: number[] = [];
@@ -19,12 +49,8 @@ export function splitWordIntoSyllables(word: string): string[] {
     }
   }
 
-  // If no vowels (e.g. preposition "в", "к", "с")
-  if (vowelIndices.length === 0) {
-    return [cleanWord];
-  }
-
-  if (vowelIndices.length === 1) {
+  // If 0 or 1 vowel, cannot be divided
+  if (vowelIndices.length <= 1) {
     return [cleanWord];
   }
 
@@ -37,21 +63,72 @@ export function splitWordIntoSyllables(word: string): string[] {
     const consonantsBetween = v2 - v1 - 1;
 
     let splitIndex: number;
+
     if (consonantsBetween === 0) {
-      // Two vowels adjacent (дифтонг или стечение гласных, e.g. "мгло-ю", "не-бо") -> divide between them
+      // Adjacent vowels (мгло-ю, не-бес-ны-е, ла-зур-но-ю, по-э-т)
       splitIndex = v1 + 1;
     } else if (consonantsBetween === 1) {
-      // One consonant -> in open syllable phonetics, consonant goes to the second syllable: e.g. "бу-ря", "не-бо"
-      splitIndex = v1 + 1;
-    } else {
-      // Multiple consonants:
-      // If starts with sonorant (р, л, м, н, й), usually split after sonorant: e.g. "снеж-ные", "вих-ри"
-      const firstCons = lower[v1 + 1];
-      if (['р', 'л', 'м', 'н', 'й'].includes(firstCons)) {
+      // Exactly one consonant between vowels
+      const singleChar = lower[v1 + 1];
+      if (singleChar === 'й') {
+        // 'й' closes syllable: май-ор, рай-он
         splitIndex = v1 + 2;
       } else {
+        // Single consonant goes to the second syllable: бу-ря, не-бо, ди-тя
         splitIndex = v1 + 1;
       }
+    } else {
+      // 2 or more consonants between v1 and v2
+      const betweenStr = lower.slice(v1 + 1, v2);
+      const firstChar = betweenStr[0];
+      const secondChar = betweenStr[1];
+
+      // Case A: check for 'ь' or 'ъ'
+      if (betweenStr.length === 2 && (secondChar === 'ь' || secondChar === 'ъ')) {
+        // e.g. сте-пью, це-пью, вью-га, чью
+        splitIndex = v1 + 1;
+      } else if (firstChar === 'й') {
+        // 'й' always closes first syllable: май-ка, вой-на, тай-на
+        splitIndex = v1 + 2;
+      } else if (betweenStr.includes('ь') || betweenStr.includes('ъ')) {
+        // 'ь' or 'ъ' closes with previous consonant: маль-чик, пись-мо, коль-цо, толь-ко, подъ-езд
+        const signIdx = Math.max(betweenStr.indexOf('ь'), betweenStr.indexOf('ъ'));
+        splitIndex = v1 + 1 + signIdx + 1;
+      } else if (consonantsBetween === 2) {
+        // Two consonants:
+        if (firstChar === secondChar) {
+          // Double consonants: стран-ник, рус-ский, ван-на, кас-са
+          splitIndex = v1 + 2;
+        } else if (ONSET_CLUSTERS_WITH_LIQUIDS.has(betweenStr)) {
+          // Plosive + liquid: за-пла-чет, до-бро, ка-пля, хи-трый
+          splitIndex = v1 + 1;
+        } else {
+          // School syllable division for two consonants:
+          // вих-ри, снеж-ные, туч-ки, веч-ные, ког-да, буд-то, луч-ше, юж-ная, пар-та, пол-ка, бан-ка
+          splitIndex = v1 + 2;
+        }
+      } else {
+        // 3 or more consonants between vowels
+        // e.g. сес-тра (с | тр), быс-тро (с | тр), из-гнан-ни-ки (з | гн)
+        const lastTwo = betweenStr.slice(-2);
+        if (ONSET_CLUSTERS_WITH_LIQUIDS.has(lastTwo) || lastTwo === 'гн' || ONSET_CLUSTERS_WITH_V.has(lastTwo)) {
+          splitIndex = v2 - 2;
+        } else if (['н', 'к', 'т', 'м'].includes(betweenStr.slice(-1))) {
+          // e.g. чест-ных (ст | н), рожд-ный
+          splitIndex = v2 - 1;
+        } else {
+          // e.g. зас-та-вил (с | та)
+          splitIndex = v1 + 2;
+        }
+      }
+    }
+
+    // Safety checks for valid string slice range
+    if (splitIndex <= prevSplit) {
+      splitIndex = prevSplit + 1;
+    }
+    if (splitIndex >= v2 + 1) {
+      splitIndex = v2;
     }
 
     syllables.push(cleanWord.slice(prevSplit, splitIndex));
@@ -63,44 +140,72 @@ export function splitWordIntoSyllables(word: string): string[] {
 }
 
 /**
- * Decomposes an entire Russian poetic line into syllables, keeping punctuation or spacing readable.
+ * Decomposes an entire Russian poetic line into syllables,
+ * keeping punctuation readable and attaching non-vocalic prepositions (в, к, с)
+ * cleanly to the following word's first syllable.
  */
 export function splitLineIntoSyllables(line: string): string[] {
-  // Split into tokens (words and punctuation)
-  const tokens = line.split(/(\s+|[.,!?;:—–"«»]+)/).filter(Boolean);
-  const result: string[] = [];
-  let pendingNonVowel = '';
+  const trimmed = line.trim();
+  if (!trimmed) return [];
 
-  for (const token of tokens) {
-    // If it's punctuation or spaces
-    if (/^[\s.,!?;:—–"«»]+$/.test(token)) {
+  // Match words and tokens
+  const wordsWithPunct = trimmed.split(/\s+/).filter(Boolean);
+  const result: string[] = [];
+  let pendingPrefix = '';
+
+  for (const rawToken of wordsWithPunct) {
+    // Separate leading punctuation (e.g. «, (, —), core word, and trailing punctuation (e.g. ,, ., !, ?, », ))
+    const match = rawToken.match(/^([^a-zA-Zа-яА-ЯёЁ0-9]*)(.*?)([^a-zA-Zа-яА-ЯёЁ0-9]*)$/);
+    if (!match) continue;
+
+    const leadPunct = match[1] || '';
+    const core = match[2] || '';
+    const trailPunct = match[3] || '';
+
+    if (!core) {
+      // Just standalone punctuation like '—'
       if (result.length > 0) {
-        result[result.length - 1] += token;
+        result[result.length - 1] += ' ' + rawToken;
       } else {
-        pendingNonVowel += token;
+        pendingPrefix += rawToken + ' ';
       }
       continue;
     }
 
-    // Check if word has vowels
-    const lower = token.toLowerCase();
-    const hasVowels = Array.from(lower).some(char => RUSSIAN_VOWELS.has(char));
+    // Check if the core word has any vowels
+    const lowerCore = core.toLowerCase();
+    const vowelCount = Array.from(lowerCore).filter(ch => RUSSIAN_VOWELS.has(ch)).length;
 
-    if (!hasVowels) {
-      // Non-vocalic preposition like "к", "в", "с" attach to following word or previous
-      pendingNonVowel += token + ' ';
+    if (vowelCount === 0) {
+      // Non-vocalic preposition or particle (e.g. 'в', 'к', 'с', 'ж', 'б')
+      pendingPrefix += (leadPunct + core + trailPunct) + ' ';
       continue;
     }
 
-    const syls = splitWordIntoSyllables(token);
-    if (syls.length > 0 && pendingNonVowel) {
-      syls[0] = pendingNonVowel + syls[0];
-      pendingNonVowel = '';
+    // Split core word into syllables
+    const syls = splitWordIntoSyllables(core);
+
+    if (syls.length === 0) continue;
+
+    // Attach leading punctuation and any pending non-vowel prefix to the first syllable
+    syls[0] = (pendingPrefix + leadPunct + syls[0]).trimStart();
+    pendingPrefix = '';
+
+    // Attach trailing punctuation to the last syllable
+    if (trailPunct) {
+      syls[syls.length - 1] = syls[syls.length - 1] + trailPunct;
     }
 
     for (const s of syls) {
       result.push(s);
     }
+  }
+
+  // If there was any trailing prefix without following words
+  if (pendingPrefix && result.length > 0) {
+    result[result.length - 1] += ' ' + pendingPrefix.trim();
+  } else if (pendingPrefix) {
+    result.push(pendingPrefix.trim());
   }
 
   return result;

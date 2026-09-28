@@ -343,10 +343,53 @@ export default function App() {
   const handleUpdateUser = async (updatedUser: User) => {
     setCurrentUser(updatedUser);
     saveUser(updatedUser);
+
+    // Synchronize student name and grade across their submissions
+    setSubmissions(prev => {
+      const updated = prev.map(s => {
+        if (s.studentId === updatedUser.id || s.studentEmail === updatedUser.email) {
+          const syncedSub = {
+            ...s,
+            studentName: updatedUser.name,
+            grade: updatedUser.grade || s.grade,
+          };
+          saveSubmissionToFirebase(syncedSub).catch(e =>
+            console.warn('Submission name sync note:', e)
+          );
+          return syncedSub;
+        }
+        return s;
+      });
+      saveSubmissions(updated);
+      return updated;
+    });
+
+    // If teacher, synchronize author name across their created assignments
+    if (updatedUser.role === 'teacher') {
+      setAssignments(prev => {
+        const updated = prev.map(a => {
+          if (a.teacherId === updatedUser.id) {
+            const syncedAsgn = {
+              ...a,
+              teacherName: updatedUser.name,
+            };
+            saveAssignmentToFirebase(syncedAsgn).catch(e =>
+              console.warn('Assignment author sync note:', e)
+            );
+            return syncedAsgn;
+          }
+          return a;
+        });
+        saveAssignments(updated);
+        return updated;
+      });
+    }
+
     try {
       await updateUserInFirebase(updatedUser);
     } catch (err) {
       console.error('Failed to update user profile in Firebase:', err);
+      throw err;
     }
   };
 

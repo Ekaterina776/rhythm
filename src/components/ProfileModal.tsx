@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User } from '../types';
 import {
   X,
@@ -12,13 +12,15 @@ import {
   Sparkles,
   Award,
   Layers,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react';
 
 interface ProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentUser: User;
-  onUpdateUser: (updatedUser: User) => void;
+  onUpdateUser: (updatedUser: User) => Promise<void> | void;
   onLogout: () => void;
   assignmentsCount: number;
   submissionsCount: number;
@@ -35,10 +37,23 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
   submissionsCount,
   onNavigateToDashboard,
 }) => {
-  const [name, setName] = useState(currentUser.name);
+  const [name, setName] = useState(currentUser.name || '');
   const [grade, setGrade] = useState(currentUser.grade || '8А');
   const [school, setSchool] = useState(currentUser.school || 'Лицей классической словесности');
+  const [isSaving, setIsSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Synchronize internal form state whenever modal is opened or currentUser updates
+  useEffect(() => {
+    if (isOpen && currentUser) {
+      setName(currentUser.name || '');
+      setGrade(currentUser.grade || '8А');
+      setSchool(currentUser.school || 'Лицей классической словесности');
+      setSavedSuccess(false);
+      setErrorMessage(null);
+    }
+  }, [isOpen, currentUser]);
 
   if (!isOpen) return null;
 
@@ -51,17 +66,34 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
     return fullName.slice(0, 2).toUpperCase() || 'РC';
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const updated: User = {
-      ...currentUser,
-      name: name.trim() || currentUser.name,
-      grade: currentUser.role === 'student' ? grade.trim() || '8А' : undefined,
-      school: school.trim() || undefined,
-    };
-    onUpdateUser(updated);
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 2500);
+    setErrorMessage(null);
+
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      setErrorMessage('Пожалуйста, укажите имя пользователя');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const updated: User = {
+        ...currentUser,
+        name: trimmedName,
+        grade: currentUser.role === 'student' ? (grade.trim() || '8А') : undefined,
+        school: currentUser.role === 'teacher' ? (school.trim() || 'Лицей классической словесности') : undefined,
+      };
+
+      await onUpdateUser(updated);
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 2500);
+    } catch (err: any) {
+      console.error('Profile update error:', err);
+      setErrorMessage(err?.message || 'Не удалось сохранить изменения. Попробуйте еще раз.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -175,12 +207,25 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
             </div>
           )}
 
+          {errorMessage && (
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-950/50 border border-rose-800/80 text-rose-300 text-xs">
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
+
           <div className="flex items-center justify-between gap-3 pt-2">
             <button
               type="submit"
-              className="flex-1 flex items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-4 py-2.5 text-xs font-bold text-slate-950 hover:from-amber-400 hover:to-amber-500 transition-all shadow-md shadow-amber-500/20 cursor-pointer"
+              disabled={isSaving}
+              className="flex-1 flex items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-4 py-2.5 text-xs font-bold text-slate-950 hover:from-amber-400 hover:to-amber-500 transition-all shadow-md shadow-amber-500/20 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
             >
-              {savedSuccess ? (
+              {isSaving ? (
+                <>
+                  <Loader2 className="h-4 w-4 text-slate-950 animate-spin" />
+                  <span>Сохранение...</span>
+                </>
+              ) : savedSuccess ? (
                 <>
                   <Check className="h-4 w-4 text-slate-950" />
                   <span>Сохранено!</span>

@@ -297,13 +297,50 @@ export async function logoutFromFirebase(): Promise<void> {
 }
 
 /**
- * Update user profile in Firestore
+ * Recursively strips undefined keys from objects before sending to Firestore
+ * to prevent 'Unsupported field value: undefined' errors.
+ */
+export function cleanFirestoreData<T extends Record<string, any>>(obj: T): Record<string, any> {
+  const result: Record<string, any> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) {
+      if (value && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Date)) {
+        result[key] = cleanFirestoreData(value);
+      } else {
+        result[key] = value;
+      }
+    }
+  }
+  return result;
+}
+
+/**
+ * Update user profile in Firestore and sync with Firebase Auth
  */
 export async function updateUserInFirebase(user: User): Promise<void> {
   try {
-    await setDoc(doc(db, 'users', user.id), user, { merge: true });
+    // 1. Sync display name with Firebase Auth user if authenticated
+    if (auth.currentUser && (auth.currentUser.uid === user.id || auth.currentUser.email === user.email)) {
+      try {
+        await updateProfile(auth.currentUser, {
+          displayName: user.name,
+        });
+      } catch (authErr) {
+        console.warn('Could not update Firebase Auth profile displayName:', authErr);
+      }
+    }
+
+    // 2. Clean data to eliminate undefined values
+    const cleanUser = cleanFirestoreData({
+      ...user,
+      updatedAt: new Date().toISOString(),
+    });
+
+    // 3. Save to Firestore
+    await setDoc(doc(db, 'users', user.id), cleanUser, { merge: true });
   } catch (err) {
     console.error('Failed to update user profile in Firestore:', err);
+    throw err;
   }
 }
 
@@ -381,7 +418,8 @@ export function subscribeToAssignments(
 }
 
 export async function saveAssignmentToFirebase(assignment: Assignment): Promise<void> {
-  await setDoc(doc(db, 'assignments', assignment.id), assignment, { merge: true });
+  const clean = cleanFirestoreData(assignment);
+  await setDoc(doc(db, 'assignments', assignment.id), clean, { merge: true });
 }
 
 export async function deleteAssignmentFromFirebase(assignmentId: string): Promise<void> {
@@ -405,7 +443,7 @@ export function subscribeToSubmissions(
         // Seed initial submissions for demo purposes if empty
         try {
           for (const item of INITIAL_SUBMISSIONS) {
-            await setDoc(doc(db, 'submissions', item.id), item);
+            await setDoc(doc(db, 'submissions', item.id), cleanFirestoreData(item));
           }
         } catch (e) {
           console.warn('Initial submissions seeding note:', e);
@@ -429,7 +467,8 @@ export function subscribeToSubmissions(
 }
 
 export async function saveSubmissionToFirebase(submission: Submission): Promise<void> {
-  await setDoc(doc(db, 'submissions', submission.id), submission, { merge: true });
+  const clean = cleanFirestoreData(submission);
+  await setDoc(doc(db, 'submissions', submission.id), clean, { merge: true });
 }
 
 export async function updateSubmissionCommentInFirebase(
